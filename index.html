@@ -23,7 +23,7 @@
             <a href="#home">Home</a>
             <a href="#features">Features</a>
             <a href="#download">Download</a>
-            <a href="#footer">Contact</a>
+            <a href="#contact">Contact</a>
             <a href="#" class="btn">Log in</a>
         </nav>
 
@@ -147,6 +147,84 @@
     <!-- downloads section ends -->
 
 
+    <!-- contact section starts  -->
+
+    <section class="contact" id="contact">
+        <div class="heading">
+            <h1>Contact Us</h1>
+            <p>Questions, feedback or a feature request? Send us a message and we'll get back to you as soon as we can</p>
+        </div>
+
+        <div class="row">
+            <div class="contact-info">
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h3>phone</h3>
+                        <a href="tel:+123456789">+123-456-789</a>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h3>email</h3>
+                        <a href="mailto:company@example.com">company@example.com</a>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h3>address</h3>
+                        <p>Mumbai, india - 12345</p>
+                    </div>
+                </div>
+            </div>
+
+            <form class="contact-form" id="contact-form" novalidate>
+                <div class="input-box">
+                    <label for="cf-name">name <span>*</span></label>
+                    <input type="text" id="cf-name" name="name" placeholder="your name" autocomplete="name"
+                        aria-required="true" aria-describedby="cf-name-error">
+                    <span class="error-message" id="cf-name-error" role="alert"></span>
+                </div>
+
+                <div class="input-box">
+                    <label for="cf-email">email <span>*</span></label>
+                    <input type="email" id="cf-email" name="email" placeholder="you@example.com" autocomplete="email"
+                        aria-required="true" aria-describedby="cf-email-error">
+                    <span class="error-message" id="cf-email-error" role="alert"></span>
+                </div>
+
+                <div class="input-box">
+                    <label for="cf-subject">subject</label>
+                    <input type="text" id="cf-subject" name="subject" placeholder="what is this about?"
+                        aria-describedby="cf-subject-error">
+                    <span class="error-message" id="cf-subject-error" role="alert"></span>
+                </div>
+
+                <div class="input-box">
+                    <label for="cf-message">message <span>*</span></label>
+                    <textarea id="cf-message" name="message" rows="6" placeholder="your message..."
+                        aria-required="true" aria-describedby="cf-message-error"></textarea>
+                    <span class="error-message" id="cf-message-error" role="alert"></span>
+                </div>
+
+                <div class="hp-field" aria-hidden="true">
+                    <label for="cf-website">website</label>
+                    <input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <button type="submit" class="all-btn" id="contact-submit">send message</button>
+
+                <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+            </form>
+        </div>
+    </section>
+
+    <!-- contact section ends -->
+
 
     <!-- footer section starts  -->
 
@@ -154,10 +232,10 @@
        <div class="box-container">
            <div class="box">
                <h3>quick links</h3>
-               <a href="#"><i class="fas fa-chevron-right"></i>home</a>
-               <a href="#"><i class="fas fa-chevron-right"></i>features</a>
-               <a href="#"><i class="fas fa-chevron-right"></i>download</a>
-               <a href="#"><i class="fas fa-chevron-right"></i>contact</a>
+               <a href="#home"><i class="fas fa-chevron-right"></i>home</a>
+               <a href="#features"><i class="fas fa-chevron-right"></i>features</a>
+               <a href="#download"><i class="fas fa-chevron-right"></i>download</a>
+               <a href="#contact"><i class="fas fa-chevron-right"></i>contact</a>
             </div>
             
             

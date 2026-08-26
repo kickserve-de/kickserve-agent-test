@@ -346,6 +346,165 @@ html{
 
 
 
+/* contact section starts  */
+
+/* keeps the fixed header from covering the target heading */
+#home, #features, #download, #contact{
+    scroll-margin-top: 10rem;
+}
+
+.contact .row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    padding-bottom: 5rem;
+}
+
+.contact .contact-info{
+    flex: 1 1 30rem;
+}
+
+.contact .contact-info .info-item{
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+}
+
+.contact .contact-info .info-item i{
+    font-size: 2rem;
+    color: var(--Soft-Blue);
+    padding-top: .5rem;
+}
+
+.contact .contact-info .info-item h3{
+    font-size: 1.8rem;
+    color: var(--Very-Dark-Blue);
+    padding-bottom: .5rem;
+}
+
+.contact .contact-info .info-item a,
+.contact .contact-info .info-item p{
+    font-size: 1.6rem;
+    color: var(--Grayish-Blue);
+    text-transform: none;
+}
+
+.contact .contact-info .info-item a:hover{
+    color: var(--Soft-Blue);
+}
+
+.contact .contact-form{
+    flex: 1 1 45rem;
+    border: 2px solid var(--Soft-Blue);
+    box-shadow: var(--box-shadow);
+    border-radius: .5rem;
+    padding: 2.5rem;
+}
+
+.contact .contact-form .input-box{
+    padding-bottom: .5rem;
+}
+
+.contact .contact-form label{
+    display: block;
+    font-size: 1.5rem;
+    color: var(--Very-Dark-Blue);
+    padding-bottom: .5rem;
+}
+
+.contact .contact-form label span{
+    color: var(--Soft-Red);
+}
+
+.contact .contact-form input,
+.contact .contact-form textarea{
+    width: 100%;
+    font-size: 1.6rem;
+    padding: 1.2rem;
+    color: var(--Very-Dark-Blue);
+    background-color: #fff;
+    border: .1rem solid var(--Grayish-Blue);
+    border-radius: .5rem;
+    /* the global * rule capitalizes everything, which would mangle typed input */
+    text-transform: none;
+}
+
+.contact .contact-form textarea{
+    resize: vertical;
+}
+
+.contact .contact-form input::placeholder,
+.contact .contact-form textarea::placeholder{
+    color: var(--Grayish-Blue);
+    text-transform: none;
+}
+
+/* the global * rule removes outlines, so restore a visible keyboard focus ring */
+.contact .contact-form input:focus-visible,
+.contact .contact-form textarea:focus-visible,
+.contact .contact-form button:focus-visible{
+    outline: .2rem solid var(--Soft-Blue);
+    outline-offset: .2rem;
+}
+
+.contact .contact-form input.invalid,
+.contact .contact-form textarea.invalid{
+    border-color: var(--Soft-Red);
+}
+
+.contact .contact-form .error-message{
+    display: block;
+    min-height: 1.8rem;
+    font-size: 1.3rem;
+    color: var(--Soft-Red);
+    text-transform: none;
+}
+
+.contact .contact-form button{
+    display: inline-block;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.contact .contact-form button[disabled]{
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.contact .contact-form button[disabled]:hover{
+    background-color: var(--Soft-Blue);
+    color: #fff;
+    border: none;
+}
+
+.contact .contact-form .form-status{
+    font-size: 1.5rem;
+    text-transform: none;
+    padding-top: 1.5rem;
+}
+
+.contact .contact-form .form-status.success{
+    color: hsl(151, 60%, 33%);
+}
+
+.contact .contact-form .form-status.error{
+    color: var(--Soft-Red);
+}
+
+/* honeypot: hidden from humans but still filled in by most bots */
+.contact .contact-form .hp-field{
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+/* contact section ends */
+
+
 /* footer section starts */
 .footer .box-container{
     display: grid;
