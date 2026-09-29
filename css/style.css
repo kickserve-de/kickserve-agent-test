@@ -402,23 +402,28 @@ html{
     padding: 2.5rem;
 }
 
-.contact .contact-form .input-box{
+/* the field rules below are shared with the login / sign up forms */
+.contact .contact-form .input-box,
+.auth-modal .auth-form .input-box{
     padding-bottom: .5rem;
 }
 
-.contact .contact-form label{
+.contact .contact-form label,
+.auth-modal .auth-form label{
     display: block;
     font-size: 1.5rem;
     color: var(--Very-Dark-Blue);
     padding-bottom: .5rem;
 }
 
-.contact .contact-form label span{
+.contact .contact-form label span,
+.auth-modal .auth-form label span{
     color: var(--Soft-Red);
 }
 
 .contact .contact-form input,
-.contact .contact-form textarea{
+.contact .contact-form textarea,
+.auth-modal .auth-form input{
     width: 100%;
     font-size: 1.6rem;
     padding: 1.2rem;
@@ -435,7 +440,8 @@ html{
 }
 
 .contact .contact-form input::placeholder,
-.contact .contact-form textarea::placeholder{
+.contact .contact-form textarea::placeholder,
+.auth-modal .auth-form input::placeholder{
     color: var(--Grayish-Blue);
     text-transform: none;
 }
@@ -443,17 +449,22 @@ html{
 /* the global * rule removes outlines, so restore a visible keyboard focus ring */
 .contact .contact-form input:focus-visible,
 .contact .contact-form textarea:focus-visible,
-.contact .contact-form button:focus-visible{
+.contact .contact-form button:focus-visible,
+.auth-modal input:focus-visible,
+.auth-modal button:focus-visible,
+.auth-modal a:focus-visible{
     outline: .2rem solid var(--Soft-Blue);
     outline-offset: .2rem;
 }
 
 .contact .contact-form input.invalid,
-.contact .contact-form textarea.invalid{
+.contact .contact-form textarea.invalid,
+.auth-modal .auth-form input.invalid{
     border-color: var(--Soft-Red);
 }
 
-.contact .contact-form .error-message{
+.contact .contact-form .error-message,
+.auth-modal .auth-form .error-message{
     display: block;
     min-height: 1.8rem;
     font-size: 1.3rem;
@@ -461,34 +472,40 @@ html{
     text-transform: none;
 }
 
-.contact .contact-form button{
+.contact .contact-form button,
+.auth-modal .auth-form button[type=submit]{
     display: inline-block;
     margin-top: 1rem;
     cursor: pointer;
 }
 
-.contact .contact-form button[disabled]{
+.contact .contact-form button[disabled],
+.auth-modal .auth-form button[disabled]{
     opacity: .6;
     cursor: not-allowed;
 }
 
-.contact .contact-form button[disabled]:hover{
+.contact .contact-form button[disabled]:hover,
+.auth-modal .auth-form button[disabled]:hover{
     background-color: var(--Soft-Blue);
     color: #fff;
     border: none;
 }
 
-.contact .contact-form .form-status{
+.contact .contact-form .form-status,
+.auth-modal .auth-form .form-status{
     font-size: 1.5rem;
     text-transform: none;
     padding-top: 1.5rem;
 }
 
-.contact .contact-form .form-status.success{
+.contact .contact-form .form-status.success,
+.auth-modal .auth-form .form-status.success{
     color: hsl(151, 60%, 33%);
 }
 
-.contact .contact-form .form-status.error{
+.contact .contact-form .form-status.error,
+.auth-modal .auth-form .form-status.error{
     color: var(--Soft-Red);
 }
 
@@ -503,6 +520,169 @@ html{
 }
 
 /* contact section ends */
+
+
+/* login / sign up modal starts  */
+
+/* stops the page behind the open dialog from scrolling */
+.modal-open{
+    overflow: hidden;
+}
+
+.auth-modal{
+    position: fixed;
+    inset: 0;
+    /* above the fixed header */
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, .5);
+    overflow-y: auto;
+}
+
+/* display: flex above would otherwise win over the hidden attribute */
+.auth-modal[hidden]{
+    display: none;
+}
+
+.auth-modal .auth-box{
+    position: relative;
+    width: 100%;
+    max-width: 45rem;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 3rem 2.5rem 2.5rem;
+    background-color: #fff;
+    border: 2px solid var(--Soft-Blue);
+    box-shadow: var(--box-shadow);
+    border-radius: .5rem;
+}
+
+.auth-modal .auth-close{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: .5rem 1rem;
+    font-size: 2rem;
+    background: none;
+    cursor: pointer;
+}
+
+.auth-modal .auth-close i{
+    color: var(--Grayish-Blue);
+}
+
+.auth-modal .auth-close:hover i{
+    color: var(--Soft-Red);
+}
+
+.auth-modal .auth-title{
+    font-size: 2.8rem;
+    color: var(--Very-Dark-Blue);
+    text-align: center;
+    padding-bottom: 1.5rem;
+}
+
+.auth-modal .auth-tabs{
+    display: flex;
+    margin-bottom: 2rem;
+    border-bottom: .2rem solid #eee;
+}
+
+.auth-modal .auth-tab{
+    flex: 1;
+    padding: 1rem;
+    font-size: 1.7rem;
+    color: var(--Grayish-Blue);
+    background: none;
+    border-bottom: .3rem solid transparent;
+    margin-bottom: -.2rem;
+    cursor: pointer;
+}
+
+.auth-modal .auth-tab:hover{
+    color: var(--Soft-Blue);
+}
+
+.auth-modal .auth-tab.active{
+    color: var(--Very-Dark-Blue);
+    border-bottom-color: var(--Soft-Blue);
+}
+
+.auth-modal .auth-form .password-box{
+    position: relative;
+}
+
+/* room for the eye button */
+.auth-modal .auth-form .password-box input{
+    padding-right: 4.5rem;
+}
+
+.auth-modal .auth-form .toggle-password{
+    position: absolute;
+    top: 50%;
+    right: .5rem;
+    transform: translateY(-50%);
+    padding: .8rem;
+    font-size: 1.6rem;
+    color: var(--Grayish-Blue);
+    background: none;
+    cursor: pointer;
+}
+
+.auth-modal .auth-form .toggle-password:hover{
+    color: var(--Soft-Blue);
+}
+
+.auth-modal .auth-form .checkbox-box{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-modal .auth-form .checkbox-box input{
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
+    accent-color: var(--Soft-Blue);
+    cursor: pointer;
+}
+
+.auth-modal .auth-form .checkbox-box label{
+    padding-bottom: 0;
+    text-transform: none;
+    cursor: pointer;
+}
+
+.auth-modal .auth-form .checkbox-box .error-message{
+    flex-basis: 100%;
+}
+
+.auth-modal .auth-form button[type=submit]{
+    width: 100%;
+}
+
+.auth-modal .auth-form .auth-switch{
+    padding-top: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--Grayish-Blue);
+    text-align: center;
+    text-transform: none;
+}
+
+.auth-modal .auth-form .auth-switch a{
+    color: var(--Soft-Blue);
+    font-weight: 600;
+}
+
+.auth-modal .auth-form .auth-switch a:hover{
+    color: var(--Soft-Red);
+}
+
+/* login / sign up modal ends */
 
 
 /* footer section starts */
