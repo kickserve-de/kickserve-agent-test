@@ -24,7 +24,7 @@
             <a href="#features">Features</a>
             <a href="#download">Download</a>
             <a href="#contact">Contact</a>
-            <a href="#" class="btn">Log in</a>
+            <a href="#" class="btn" id="login-btn" aria-haspopup="dialog" aria-controls="auth-modal">Log in</a>
         </nav>
 
 
@@ -274,6 +274,112 @@
    </section>
 
     <!-- footer section ends -->
+
+
+    <!-- login / sign up modal starts  -->
+
+    <div class="auth-modal" id="auth-modal" hidden>
+        <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+            <button type="button" class="auth-close" id="auth-close" aria-label="close">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+
+            <h2 class="auth-title" id="auth-title">welcome</h2>
+
+            <div class="auth-tabs" role="tablist" aria-label="log in or sign up">
+                <button type="button" class="auth-tab active" id="tab-login" role="tab" aria-selected="true"
+                    aria-controls="panel-login">log in</button>
+                <button type="button" class="auth-tab" id="tab-register" role="tab" aria-selected="false"
+                    aria-controls="panel-register" tabindex="-1">sign up</button>
+            </div>
+
+            <!-- log in  -->
+            <div class="auth-panel" id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+                <form class="auth-form" id="login-form" novalidate>
+                    <div class="input-box">
+                        <label for="lf-email">email <span>*</span></label>
+                        <input type="email" id="lf-email" name="email" placeholder="you@example.com" autocomplete="email"
+                            aria-required="true" aria-describedby="lf-email-error">
+                        <span class="error-message" id="lf-email-error" role="alert"></span>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="lf-password">password <span>*</span></label>
+                        <div class="password-box">
+                            <input type="password" id="lf-password" name="password" placeholder="your password"
+                                autocomplete="current-password" aria-required="true" aria-describedby="lf-password-error">
+                            <button type="button" class="toggle-password fas fa-eye" aria-controls="lf-password"
+                                aria-label="show password" aria-pressed="false"></button>
+                        </div>
+                        <span class="error-message" id="lf-password-error" role="alert"></span>
+                    </div>
+
+                    <button type="submit" class="all-btn">log in</button>
+
+                    <p class="form-status" role="status" aria-live="polite"></p>
+
+                    <p class="auth-switch">no account yet? <a href="#" data-tab="register">sign up</a></p>
+                </form>
+            </div>
+
+            <!-- sign up  -->
+            <div class="auth-panel" id="panel-register" role="tabpanel" aria-labelledby="tab-register" hidden>
+                <form class="auth-form" id="register-form" novalidate>
+                    <div class="input-box">
+                        <label for="rf-name">name <span>*</span></label>
+                        <input type="text" id="rf-name" name="name" placeholder="your name" autocomplete="name"
+                            aria-required="true" aria-describedby="rf-name-error">
+                        <span class="error-message" id="rf-name-error" role="alert"></span>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="rf-email">email <span>*</span></label>
+                        <input type="email" id="rf-email" name="email" placeholder="you@example.com" autocomplete="email"
+                            aria-required="true" aria-describedby="rf-email-error">
+                        <span class="error-message" id="rf-email-error" role="alert"></span>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="rf-password">password <span>*</span></label>
+                        <div class="password-box">
+                            <input type="password" id="rf-password" name="password" placeholder="at least 8 characters"
+                                autocomplete="new-password" aria-required="true" aria-describedby="rf-password-error">
+                            <button type="button" class="toggle-password fas fa-eye" aria-controls="rf-password"
+                                aria-label="show password" aria-pressed="false"></button>
+                        </div>
+                        <span class="error-message" id="rf-password-error" role="alert"></span>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="rf-password-confirm">repeat password <span>*</span></label>
+                        <div class="password-box">
+                            <input type="password" id="rf-password-confirm" name="password-confirm"
+                                placeholder="repeat your password" autocomplete="new-password" aria-required="true"
+                                aria-describedby="rf-password-confirm-error">
+                            <button type="button" class="toggle-password fas fa-eye" aria-controls="rf-password-confirm"
+                                aria-label="show password" aria-pressed="false"></button>
+                        </div>
+                        <span class="error-message" id="rf-password-confirm-error" role="alert"></span>
+                    </div>
+
+                    <div class="input-box checkbox-box">
+                        <input type="checkbox" id="rf-terms" name="terms" aria-required="true"
+                            aria-describedby="rf-terms-error">
+                        <label for="rf-terms">I accept the terms of use <span>*</span></label>
+                        <span class="error-message" id="rf-terms-error" role="alert"></span>
+                    </div>
+
+                    <button type="submit" class="all-btn">sign up</button>
+
+                    <p class="form-status" role="status" aria-live="polite"></p>
+
+                    <p class="auth-switch">already registered? <a href="#" data-tab="login">log in</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- login / sign up modal ends -->
 
 
     <script src="js/main.js"></script>
