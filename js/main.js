@@ -526,3 +526,334 @@ if (pongCanvas) {
     resetGame()
     draw()
 }
+
+
+/* pac-man game  */
+
+let pacmanCanvas = document.querySelector("#pacman-canvas")
+
+if (pacmanCanvas) {
+    const ctx = pacmanCanvas.getContext("2d")
+    const overlay = document.querySelector("#pacman-overlay")
+    const message = document.querySelector("#pacman-message")
+    const startBtn = document.querySelector("#pacman-start")
+    const scoreEl = document.querySelector("#pacman-score")
+    const livesEl = document.querySelector("#pacman-lives")
+
+    // # wall, . dot, - door of the ghost house, P start of pac-man
+    // the open ends of the middle row are a tunnel to the other side
+    const MAZE = [
+        "###################",
+        "#........#........#",
+        "#.##.###.#.###.##.#",
+        "#.................#",
+        "#.##.#.#####.#.##.#",
+        "#....#...#...#....#",
+        "####.### # ###.####",
+        "   #.#       #.#   ",
+        "####.# ##-## #.####",
+        "    .  #   #  .    ",
+        "####.# ##### #.####",
+        "   #.#       #.#   ",
+        "####.# ##### #.####",
+        "#........#........#",
+        "#.##.###.#.###.##.#",
+        "#..#.....P.....#..#",
+        "##.#.#.#####.#.#.##",
+        "#....#...#...#....#",
+        "#.######.#.######.#",
+        "#.................#",
+        "###################"
+    ]
+
+    const COLS = MAZE[0].length
+    const ROWS = MAZE.length
+    const W = pacmanCanvas.width
+    const H = pacmanCanvas.height
+    const TILE = W / COLS
+    const PACMAN_SPEED = 7   // tiles per second
+    const GHOST_SPEED = 5.5  // slower than pac-man, so the ghosts can be outrun
+    const LIVES = 3
+    const HOUSE_EXIT = { col: 9, row: 7 }
+    const START_ROW = MAZE.findIndex(line => line.includes("P"))
+    const START = { col: MAZE[START_ROW].indexOf("P"), row: START_ROW }
+
+    const css = getComputedStyle(document.documentElement)
+    const blue = css.getPropertyValue("--Soft-Blue").trim()
+    const red = css.getPropertyValue("--Soft-Red").trim()
+
+    const DIRS = {
+        ArrowUp: { x: 0, y: -1 },
+        ArrowDown: { x: 0, y: 1 },
+        ArrowLeft: { x: -1, y: 0 },
+        ArrowRight: { x: 1, y: 0 }
+    }
+
+    // release: seconds until the ghost leaves the house
+    // chase: how often the ghost heads for pac-man instead of turning at random
+    const GHOSTS = [
+        { color: red, col: 9, row: 7, release: 0, chase: .8 },
+        { color: "#ffb8de", col: 8, row: 9, release: 3, chase: .6 },
+        { color: "#00e0e0", col: 9, row: 9, release: 6, chase: .45 },
+        { color: "#ffb852", col: 10, row: 9, release: 9, chase: .3 }
+    ]
+
+    let dots, dotsLeft, pacman, ghosts, nextDir, score, lives, elapsed, pause
+    let running = false, lastTime = 0, swipe = null
+
+    const isOpen = (col, row, ghost) => {
+        if (row < 0 || row >= ROWS) return false
+        let tile = MAZE[row][(col + COLS) % COLS]
+        if (tile === "#") return false
+        // only ghosts on their way out may pass the door
+        if (tile === "-") return Boolean(ghost) && !ghost.out
+        return true
+    }
+
+    const canMove = (actor, dir, ghost) => isOpen(actor.col + dir.x, actor.row + dir.y, ghost)
+
+    const isReverse = (a, b) => a && b && a.x === -b.x && a.y === -b.y
+
+    // pixel centre of an actor, including the way to the next tile
+    const position = actor => ({
+        x: (actor.col + (actor.dir ? actor.dir.x * actor.progress : 0) + .5) * TILE,
+        y: (actor.row + (actor.dir ? actor.dir.y * actor.progress : 0) + .5) * TILE
+    })
+
+    // moves an actor tile by tile; steer() picks the direction at every tile centre
+    const move = (actor, distance, steer) => {
+        while (distance > 0) {
+            if (!actor.dir) {
+                steer(actor)
+                if (!actor.dir) return
+            }
+
+            let rest = 1 - actor.progress
+            if (distance < rest) {
+                actor.progress += distance
+                return
+            }
+
+            distance -= rest
+            actor.col = (actor.col + actor.dir.x + COLS) % COLS
+            actor.row += actor.dir.y
+            actor.progress = 0
+            steer(actor)
+            if (!actor.dir) return
+        }
+    }
+
+    const endGame = text => {
+        running = false
+        message.textContent = text
+        startBtn.textContent = "play again"
+        overlay.hidden = false
+        startBtn.focus()
+    }
+
+    const steerPacman = p => {
+        if (dots[p.row][p.col]) {
+            dots[p.row][p.col] = false
+            dotsLeft--
+            score += 10
+            scoreEl.textContent = score
+            if (!dotsLeft) endGame("you win!")
+        }
+
+        if (nextDir && canMove(p, nextDir)) p.dir = nextDir
+        else if (p.dir && !canMove(p, p.dir)) p.dir = null
+        if (p.dir) p.facing = p.dir
+    }
+
+    const distanceTo = (ghost, dir, target) =>
+        (ghost.col + dir.x - target.col) ** 2 + (ghost.row + dir.y - target.row) ** 2
+
+    const steerGhost = g => {
+        // once outside, the door stays closed for this ghost
+        if (g.row <= HOUSE_EXIT.row) g.out = true
+
+        let all = Object.values(DIRS).filter(d => canMove(g, d, g))
+        let options = all.filter(d => !isReverse(d, g.dir))
+        // ghosts only turn around in a dead end
+        if (!options.length) options = all
+        if (!options.length) {
+            g.dir = null
+            return
+        }
+
+        if (!g.out || Math.random() < g.chase) {
+            let target = g.out ? pacman : HOUSE_EXIT
+            options.sort((a, b) => distanceTo(g, a, target) - distanceTo(g, b, target))
+            g.dir = options[0]
+        } else {
+            g.dir = options[Math.floor(Math.random() * options.length)]
+        }
+    }
+
+    const resetActors = () => {
+        pacman = { ...START, dir: null, facing: DIRS.ArrowLeft, progress: 0 }
+        ghosts = GHOSTS.map(g => ({ ...g, dir: null, progress: 0, out: g.row <= HOUSE_EXIT.row }))
+        nextDir = null
+        elapsed = 0
+    }
+
+    const resetGame = () => {
+        dots = MAZE.map(line => [...line].map(tile => tile === "."))
+        dotsLeft = dots.flat().filter(Boolean).length
+        score = 0
+        lives = LIVES
+        pause = 0
+        scoreEl.textContent = score
+        livesEl.textContent = lives
+        resetActors()
+    }
+
+    const loseLife = () => {
+        lives--
+        livesEl.textContent = lives
+        if (!lives) return endGame("game over")
+        resetActors()
+        pause = 1 // a short breather before the next round
+    }
+
+    const update = dt => {
+        if (pause > 0) {
+            pause -= dt
+            return
+        }
+
+        // pac-man may turn around at any time, not only at a tile centre
+        if (isReverse(nextDir, pacman.dir) && pacman.progress > 0) {
+            pacman.col = (pacman.col + pacman.dir.x + COLS) % COLS
+            pacman.row += pacman.dir.y
+            pacman.progress = 1 - pacman.progress
+            pacman.dir = pacman.facing = nextDir
+        }
+
+        move(pacman, PACMAN_SPEED * dt, steerPacman)
+        if (!running) return
+
+        elapsed += dt
+        let p = position(pacman)
+
+        for (let g of ghosts) {
+            if (elapsed >= g.release) move(g, GHOST_SPEED * dt, steerGhost)
+
+            let q = position(g)
+            if (Math.hypot(p.x - q.x, p.y - q.y) < TILE * .7) return loseLife()
+        }
+    }
+
+    const drawPacman = time => {
+        let { x, y } = position(pacman)
+        let angle = Math.atan2(pacman.facing.y, pacman.facing.x)
+        let mouth = pacman.dir ? Math.abs(Math.sin(time * 12)) * .7 + .05 : .4
+
+        ctx.fillStyle = "#ffd84d"
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.arc(x, y, TILE * .45, angle + mouth / 2, angle + Math.PI * 2 - mouth / 2)
+        ctx.closePath()
+        ctx.fill()
+    }
+
+    const drawGhost = g => {
+        let { x, y } = position(g)
+        let r = TILE * .45
+        let look = g.dir || DIRS.ArrowUp
+
+        ctx.fillStyle = g.color
+        ctx.beginPath()
+        ctx.arc(x, y - r * .1, r, Math.PI, 0)
+        ctx.lineTo(x + r, y + r)
+        ctx.lineTo(x - r, y + r)
+        ctx.closePath()
+        ctx.fill()
+
+        for (let side of [-1, 1]) {
+            let ex = x + side * r * .38
+            let ey = y - r * .2
+
+            ctx.fillStyle = "#fff"
+            ctx.beginPath()
+            ctx.arc(ex, ey, r * .3, 0, Math.PI * 2)
+            ctx.fill()
+
+            ctx.fillStyle = "#1a1a40"
+            ctx.beginPath()
+            ctx.arc(ex + look.x * r * .12, ey + look.y * r * .12, r * .15, 0, Math.PI * 2)
+            ctx.fill()
+        }
+    }
+
+    const draw = (time = 0) => {
+        ctx.clearRect(0, 0, W, H)
+
+        MAZE.forEach((line, row) => [...line].forEach((tile, col) => {
+            if (tile === "#") {
+                ctx.fillStyle = blue
+                ctx.fillRect(col * TILE, row * TILE, TILE, TILE)
+            } else if (tile === "-") {
+                ctx.fillStyle = "#ffb8de"
+                ctx.fillRect(col * TILE, row * TILE + TILE * .4, TILE, TILE * .2)
+            }
+
+            if (dots[row][col]) {
+                ctx.fillStyle = "#fff"
+                ctx.beginPath()
+                ctx.arc((col + .5) * TILE, (row + .5) * TILE, TILE * .12, 0, Math.PI * 2)
+                ctx.fill()
+            }
+        }))
+
+        drawPacman(time)
+        ghosts.forEach(drawGhost)
+    }
+
+    const loop = time => {
+        if (!running) return
+        // caps the step so the actors do not jump after switching tabs
+        let dt = Math.min((time - lastTime) / 1000, 0.05)
+        lastTime = time
+        update(dt)
+        draw(time / 1000)
+        if (running) requestAnimationFrame(loop)
+    }
+
+    startBtn.addEventListener("click", () => {
+        resetGame()
+        overlay.hidden = true
+        running = true
+        lastTime = performance.now()
+        requestAnimationFrame(loop)
+    })
+
+    document.addEventListener("keydown", e => {
+        if (!running || !DIRS[e.key]) return
+        e.preventDefault() // keeps the page from scrolling while playing
+        nextDir = DIRS[e.key]
+    })
+
+    // finger (or mouse drag): every swipe of 20px sets the next direction
+    pacmanCanvas.addEventListener("pointerdown", e => {
+        swipe = { x: e.clientX, y: e.clientY }
+    })
+
+    pacmanCanvas.addEventListener("pointermove", e => {
+        if (!running || !swipe) return
+        let dx = e.clientX - swipe.x
+        let dy = e.clientY - swipe.y
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return
+
+        if (Math.abs(dx) > Math.abs(dy)) nextDir = dx > 0 ? DIRS.ArrowRight : DIRS.ArrowLeft
+        else nextDir = dy > 0 ? DIRS.ArrowDown : DIRS.ArrowUp
+        swipe = { x: e.clientX, y: e.clientY }
+    })
+
+    for (let type of ["pointerup", "pointercancel"]) {
+        pacmanCanvas.addEventListener(type, () => { swipe = null })
+    }
+
+    resetGame()
+    draw()
+}

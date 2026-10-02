@@ -170,6 +170,26 @@
                 </div>
             </div>
         </div>
+
+        <div class="heading">
+            <h1>Play Pac-Man</h1>
+            <p>Eat all the dots and dodge the four ghosts. Steer with the arrow keys or swipe with your finger</p>
+        </div>
+
+        <div class="pong pacman">
+            <div class="pong-score" aria-live="polite">
+                <span>score <b id="pacman-score">0</b></span>
+                <span>lives <b id="pacman-lives">3</b></span>
+            </div>
+
+            <div class="pong-field">
+                <canvas id="pacman-canvas" width="456" height="504" aria-label="pac-man game"></canvas>
+                <div class="pong-overlay" id="pacman-overlay">
+                    <p class="pong-message" id="pacman-message">ready?</p>
+                    <button type="button" class="all-btn" id="pacman-start">start</button>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- play section ends -->

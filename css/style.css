@@ -423,6 +423,15 @@ html{
     background-color: #fff;
 }
 
+/* the maze is taller than wide, so it gets a narrower field */
+.play .pacman{
+    max-width: 46rem;
+}
+
+.play .pacman canvas{
+    cursor: default;
+}
+
 /* play section ends */
 
 
