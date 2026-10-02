@@ -355,3 +355,174 @@ if (authModal) {
         }
     })
 }
+
+
+/* pong game  */
+
+let pongCanvas = document.querySelector("#pong-canvas")
+
+if (pongCanvas) {
+    const ctx = pongCanvas.getContext("2d")
+    const overlay = document.querySelector("#pong-overlay")
+    const message = document.querySelector("#pong-message")
+    const startBtn = document.querySelector("#pong-start")
+    const playerScoreEl = document.querySelector("#pong-player")
+    const computerScoreEl = document.querySelector("#pong-computer")
+
+    const W = pongCanvas.width
+    const H = pongCanvas.height
+    const PADDLE_W = 12
+    const PADDLE_H = 90
+    const BALL = 12
+    const WIN_SCORE = 5
+    const PLAYER_SPEED = 480   // px per second with the arrow keys
+    const COMPUTER_SPEED = 300 // slower than the ball, so the computer can be beaten
+
+    const css = getComputedStyle(document.documentElement)
+    const blue = css.getPropertyValue("--Soft-Blue").trim()
+    const red = css.getPropertyValue("--Soft-Red").trim()
+
+    let player, computer, ball, scores, keys = {}, running = false, lastTime = 0
+
+    const resetBall = direction => {
+        let angle = (Math.random() * 0.8 - 0.4) * Math.PI / 2
+        ball = {
+            x: W / 2 - BALL / 2,
+            y: H / 2 - BALL / 2,
+            speed: 360,
+            vx: Math.cos(angle) * direction,
+            vy: Math.sin(angle)
+        }
+    }
+
+    const resetGame = () => {
+        player = { y: H / 2 - PADDLE_H / 2 }
+        computer = { y: H / 2 - PADDLE_H / 2 }
+        scores = { player: 0, computer: 0 }
+        playerScoreEl.textContent = 0
+        computerScoreEl.textContent = 0
+        resetBall(Math.random() < 0.5 ? 1 : -1)
+    }
+
+    const clampPaddle = paddle => {
+        paddle.y = Math.max(0, Math.min(H - PADDLE_H, paddle.y))
+    }
+
+    // bounces the ball off a paddle; the hit position decides the new angle
+    const hitPaddle = (paddle, paddleX, direction) => {
+        let offset = (ball.y + BALL / 2 - (paddle.y + PADDLE_H / 2)) / (PADDLE_H / 2)
+        let angle = offset * Math.PI / 4
+        ball.vx = Math.cos(angle) * direction
+        ball.vy = Math.sin(angle)
+        ball.speed = Math.min(ball.speed + 30, 800)
+        ball.x = direction > 0 ? paddleX + PADDLE_W : paddleX - BALL
+    }
+
+    const score = who => {
+        scores[who]++
+        playerScoreEl.textContent = scores.player
+        computerScoreEl.textContent = scores.computer
+
+        if (scores[who] >= WIN_SCORE) {
+            running = false
+            message.textContent = who === "player" ? "you win!" : "the computer wins"
+            startBtn.textContent = "play again"
+            overlay.hidden = false
+            startBtn.focus()
+            return
+        }
+
+        // the ball is served towards whoever just lost the point
+        resetBall(who === "player" ? 1 : -1)
+    }
+
+    const update = dt => {
+        if (keys.ArrowUp) player.y -= PLAYER_SPEED * dt
+        if (keys.ArrowDown) player.y += PLAYER_SPEED * dt
+        clampPaddle(player)
+
+        let target = ball.y + BALL / 2 - PADDLE_H / 2
+        let step = COMPUTER_SPEED * dt
+        computer.y += Math.max(-step, Math.min(step, target - computer.y))
+        clampPaddle(computer)
+
+        ball.x += ball.vx * ball.speed * dt
+        ball.y += ball.vy * ball.speed * dt
+
+        if (ball.y <= 0 || ball.y + BALL >= H) {
+            ball.vy = -ball.vy
+            ball.y = Math.max(0, Math.min(H - BALL, ball.y))
+        }
+
+        let playerX = 20
+        let computerX = W - 20 - PADDLE_W
+
+        if (ball.vx < 0 && ball.x <= playerX + PADDLE_W && ball.x + BALL >= playerX &&
+            ball.y + BALL >= player.y && ball.y <= player.y + PADDLE_H) {
+            hitPaddle(player, playerX, 1)
+        }
+
+        if (ball.vx > 0 && ball.x + BALL >= computerX && ball.x <= computerX + PADDLE_W &&
+            ball.y + BALL >= computer.y && ball.y <= computer.y + PADDLE_H) {
+            hitPaddle(computer, computerX, -1)
+        }
+
+        if (ball.x + BALL < 0) score("computer")
+        else if (ball.x > W) score("player")
+    }
+
+    const draw = () => {
+        ctx.clearRect(0, 0, W, H)
+
+        ctx.fillStyle = "rgba(255, 255, 255, .25)"
+        for (let y = 10; y < H; y += 30) ctx.fillRect(W / 2 - 1, y, 2, 15)
+
+        ctx.fillStyle = blue
+        ctx.fillRect(20, player.y, PADDLE_W, PADDLE_H)
+
+        ctx.fillStyle = red
+        ctx.fillRect(W - 20 - PADDLE_W, computer.y, PADDLE_W, PADDLE_H)
+
+        ctx.fillStyle = "#fff"
+        ctx.fillRect(ball.x, ball.y, BALL, BALL)
+    }
+
+    const loop = time => {
+        if (!running) return
+        // caps the step so the ball does not jump after switching tabs
+        let dt = Math.min((time - lastTime) / 1000, 0.05)
+        lastTime = time
+        update(dt)
+        draw()
+        requestAnimationFrame(loop)
+    }
+
+    startBtn.addEventListener("click", () => {
+        resetGame()
+        overlay.hidden = true
+        running = true
+        lastTime = performance.now()
+        requestAnimationFrame(loop)
+    })
+
+    // mouse and finger: the paddle follows the pointer
+    pongCanvas.addEventListener("pointermove", e => {
+        if (!running) return
+        let rect = pongCanvas.getBoundingClientRect()
+        player.y = (e.clientY - rect.top) * (H / rect.height) - PADDLE_H / 2
+        clampPaddle(player)
+    })
+
+    document.addEventListener("keydown", e => {
+        if (!running || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return
+        e.preventDefault() // keeps the page from scrolling while playing
+        keys[e.key] = true
+    })
+
+    document.addEventListener("keyup", e => {
+        keys[e.key] = false
+    })
+
+    resetGame()
+    draw()
+}
