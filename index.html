@@ -23,6 +23,7 @@
             <a href="#home">Home</a>
             <a href="#features">Features</a>
             <a href="#download">Download</a>
+            <a href="#play">Play</a>
             <a href="#contact">Contact</a>
             <a href="#" class="btn" id="login-btn" aria-haspopup="dialog" aria-controls="auth-modal">Log in</a>
         </nav>
@@ -147,6 +148,33 @@
     <!-- downloads section ends -->
 
 
+    <!-- play section starts  -->
+
+    <section class="play" id="play">
+        <div class="heading">
+            <h1>Play Pong</h1>
+            <p>Need a break? Beat the computer to 5 points. Move your paddle with the mouse, the arrow keys or your finger</p>
+        </div>
+
+        <div class="pong">
+            <div class="pong-score" aria-live="polite">
+                <span>you <b id="pong-player">0</b></span>
+                <span>computer <b id="pong-computer">0</b></span>
+            </div>
+
+            <div class="pong-field">
+                <canvas id="pong-canvas" width="800" height="500" aria-label="pong game"></canvas>
+                <div class="pong-overlay" id="pong-overlay">
+                    <p class="pong-message" id="pong-message">ready?</p>
+                    <button type="button" class="all-btn" id="pong-start">start</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- play section ends -->
+
+
     <!-- contact section starts  -->
 
     <section class="contact" id="contact">
@@ -235,6 +263,7 @@
                <a href="#home"><i class="fas fa-chevron-right"></i>home</a>
                <a href="#features"><i class="fas fa-chevron-right"></i>features</a>
                <a href="#download"><i class="fas fa-chevron-right"></i>download</a>
+               <a href="#play"><i class="fas fa-chevron-right"></i>play</a>
                <a href="#contact"><i class="fas fa-chevron-right"></i>contact</a>
             </div>
             

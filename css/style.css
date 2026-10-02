@@ -345,11 +345,92 @@ html{
 /* downloads section ends */
 
 
+/* play section starts  */
+
+.play .pong{
+    max-width: 80rem;
+    margin: 0 auto;
+    padding-bottom: 5rem;
+}
+
+.play .pong-score{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--Very-Dark-Blue);
+}
+
+.play .pong-score span{
+    color: var(--Very-Dark-Blue);
+}
+
+.play .pong-score b{
+    padding-left: .5rem;
+    font-size: 2.4rem;
+    color: var(--Soft-Blue);
+}
+
+.play .pong-score span:last-child b{
+    color: var(--Soft-Red);
+}
+
+.play .pong-field{
+    position: relative;
+    border: 2px solid var(--Soft-Blue);
+    box-shadow: var(--box-shadow);
+    border-radius: .5rem;
+    overflow: hidden;
+}
+
+.play canvas{
+    display: block;
+    width: 100%;
+    height: auto;
+    background-color: var(--Very-Dark-Blue);
+    /* lets the finger move the paddle without scrolling the page */
+    touch-action: none;
+    cursor: none;
+}
+
+.play .pong-overlay{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+.play .pong-overlay[hidden]{
+    display: none;
+}
+
+.play .pong-message{
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.play .pong-overlay .all-btn{
+    cursor: pointer;
+}
+
+.play .pong-overlay .all-btn:hover{
+    background-color: #fff;
+}
+
+/* play section ends */
+
+
 
 /* contact section starts  */
 
 /* keeps the fixed header from covering the target heading */
-#home, #features, #download, #contact{
+#home, #features, #download, #play, #contact{
     scroll-margin-top: 10rem;
 }
 
