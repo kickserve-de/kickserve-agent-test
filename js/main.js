@@ -176,6 +176,30 @@ if (contactForm) {
 }
 
 
+/* faq accordion  */
+
+let faqQuestions = document.querySelectorAll(".faq-question")
+
+const setFaqOpen = (btn, open) => {
+    let answer = document.querySelector("#" + btn.getAttribute("aria-controls"))
+    let icon = btn.querySelector("i")
+
+    btn.setAttribute("aria-expanded", open ? "true" : "false")
+    answer.classList.toggle("open", open)
+    icon.classList.toggle("fa-plus", !open)
+    icon.classList.toggle("fa-minus", open)
+}
+
+faqQuestions.forEach(btn => {
+    btn.addEventListener("click", () => {
+        let open = btn.getAttribute("aria-expanded") !== "true"
+
+        // only one answer at a time: opening a question closes the others
+        faqQuestions.forEach(other => setFaqOpen(other, other === btn && open))
+    })
+})
+
+
 /* password show / hide  */
 
 const setPasswordVisible = (btn, visible) => {
