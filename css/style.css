@@ -435,11 +435,96 @@ html{
 /* play section ends */
 
 
+/* faq section starts  */
+
+.faq .faq-list{
+    max-width: 80rem;
+    margin: 0 auto;
+    padding-bottom: 5rem;
+}
+
+.faq .faq-item{
+    border-bottom: .1rem solid rgba(0, 0, 0, .1);
+}
+
+.faq .faq-item:first-child{
+    border-top: .1rem solid rgba(0, 0, 0, .1);
+}
+
+.faq .faq-question{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    width: 100%;
+    padding: 2rem 0;
+    font-size: 1.8rem;
+    font-weight: 400;
+    text-align: left;
+    background: none;
+    cursor: pointer;
+}
+
+.faq .faq-question span{
+    color: var(--Very-Dark-Blue);
+    /* the global * rule capitalizes everything, which reads oddly in questions */
+    text-transform: none;
+}
+
+.faq .faq-question i{
+    flex-shrink: 0;
+    font-size: 1.6rem;
+    color: var(--Soft-Blue);
+}
+
+.faq .faq-question:hover span{
+    color: var(--Soft-Red);
+}
+
+.faq .faq-question[aria-expanded="true"] i{
+    color: var(--Soft-Red);
+    transform: rotate(180deg);
+}
+
+/* the global * rule removes outlines, so restore a visible keyboard focus ring */
+.faq .faq-question:focus-visible{
+    outline: .2rem solid var(--Soft-Blue);
+    outline-offset: .2rem;
+}
+
+/* animates from 0 to the natural height of the answer */
+.faq .faq-answer{
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition: grid-template-rows .3s ease-in-out, visibility .3s;
+}
+
+.faq .faq-answer > div{
+    overflow: hidden;
+}
+
+.faq .faq-answer.open{
+    grid-template-rows: 1fr;
+    visibility: visible;
+}
+
+.faq .faq-answer p{
+    padding-bottom: 2rem;
+    font-size: 1.6rem;
+    line-height: 1.8;
+    color: var(--Grayish-Blue);
+    text-transform: none;
+}
+
+/* faq section ends */
+
+
 
 /* contact section starts  */
 
 /* keeps the fixed header from covering the target heading */
-#home, #features, #download, #play, #contact{
+#home, #features, #download, #play, #faq, #contact{
     scroll-margin-top: 10rem;
 }
 
